@@ -1,9 +1,10 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_metals, get_single_metal
-from views import get_all_orders, get_single_order, create_order
+from views import get_all_orders, get_single_order, create_order, delete_order
 from views import get_all_sizes, get_single_size
 from views import get_all_styles, get_single_style
+from views.order_requests import delete_order
 
 
 
@@ -64,6 +65,20 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Encode the new animal and send in response
         self.wfile.write(json.dumps(new_animal).encode())
+
+    def do_DELETE(self):
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "orders":
+            delete_order(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
     def do_PUT(self):
         """Handles PUT requests to the server """

@@ -65,5 +65,13 @@ def update_order(req):
     return ORDERS
 
 
-def delete_order(req):
-    return ORDERS
+def delete_order(id):
+    order_index = -1
+
+    for index, order in enumerate(ORDERS):
+        if order["id"] == id:
+            # Found the order. Store the current index.
+            order_index = index
+
+    if order_index >= 0:
+        ORDERS.pop(order_index)
