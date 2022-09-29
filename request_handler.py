@@ -15,16 +15,25 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles GET requests to the server """
         self._set_headers(200)
 
-        if self.path == "/metals":
-            response = get_all_metals()
+        response = {}  # Default response
 
-        elif self.path == "/styles":
+        # Parse the URL and capture the tuple that is returned
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "metals":
+            if id is not None:
+                response = get_single_metal(id)
+
+            else:
+                response = get_all_metals()
+
+        elif resource == "styles":
             response = get_all_styles()
 
-        elif self.path == "/sizes":
+        elif resource == "sizes":
             response = get_all_sizes()
 
-        elif self.path == "/orders":
+        elif resource == "orders":
             response = get_all_orders()
 
         else:
@@ -65,6 +74,27 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
+
+    def parse_url(self, path):
+        # Just like splitting a string in JavaScript. If the
+        # path is "/animals/1", the resulting list will
+        # have "" at index 0, "animals" at index 1, and "1"
+        # at index 2.
+        path_params = path.split("/")
+        resource = path_params[1]
+        id = None
+
+        # Try to get the item at index 2
+        try:
+            # Convert the string "1" to the integer 1
+            # This is the new parseInt()
+            id = int(path_params[2])
+        except IndexError:
+            pass  # No route parameter exists: /animals
+        except ValueError:
+            pass  # Request had trailing slash: /animals/
+
+        return (resource, id)  # This is a tuple
 
 
 # point of this application.
