@@ -5,6 +5,7 @@ from .order_requests import get_all_orders
 from .order_requests import get_single_order
 from .order_requests import create_order
 from .order_requests import delete_order
+from .order_requests import update_order
 
 from .size_requests import get_all_sizes
 from .size_requests import get_single_size

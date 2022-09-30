@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import get_all_metals, get_single_metal
-from views import get_all_orders, get_single_order, create_order, delete_order
+from views import get_all_orders, get_single_order, create_order, delete_order, update_order
 from views import get_all_sizes, get_single_size
 from views import get_all_styles, get_single_style
 from views.order_requests import delete_order
@@ -35,7 +35,11 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = get_all_sizes()
 
         elif resource == "orders":
-            response = get_all_orders()
+            if id is not None:
+                response = get_single_order(id)
+
+            else:
+                response = get_all_orders()
 
         else:
             response = []
@@ -82,7 +86,20 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         """Handles PUT requests to the server """
-        self.do_POST()
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "orders":
+            update_order(id, post_body)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
     def do_OPTIONS(self):
         """Sets the options headers

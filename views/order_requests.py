@@ -59,11 +59,12 @@ def create_order(order):
     # Return the dictionary with `id` property added
     return order
 
-
-
-def update_order(req):
-    return ORDERS
-
+def update_order(id, new_order):
+    for index, order in enumerate(ORDERS):
+        if order["id"] == id:
+            new_order["id"] = id
+            ORDERS[index] = new_order
+            break
 
 def delete_order(id):
     order_index = -1
